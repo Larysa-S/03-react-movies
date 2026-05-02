@@ -1,4 +1,6 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+// 1. Розділяємо імпорт: useState — це значення, решта — типи
+import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import css from "./SearchBar.module.css";
 
@@ -9,12 +11,11 @@ interface SearchBarProps {
 export default function SearchBar({ onSubmit }: SearchBarProps) {
   const [value, setValue] = useState<string>("");
 
-  // типізація для події сабміту
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // 2. Використовуємо FormEvent тут, щоб він не вважався "невикористаним"
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (value.trim() === "") {
-      // Згідно з ТЗ використовуємо toast замість alert
       toast.error("Please enter your search query.");
       return;
     }
@@ -29,9 +30,7 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
 
   return (
     <header className={css.header}>
-      {}
       <Toaster position="top-right" />
-
       <div className={css.container}>
         <a
           className={css.link}
@@ -41,11 +40,10 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
         >
           Powered by TMDB
         </a>
-
         <form className={css.form} onSubmit={handleSubmit}>
           <input
             className={css.input}
-            name="query" //
+            name="query"
             type="text"
             value={value}
             onChange={handleChange}

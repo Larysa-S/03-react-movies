@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import MovieService from "../../services/movieService";
+// ПРАВИЛЬНО: використовуємо type для інтерфейсів
 import type { Movie } from "../../types/movie";
 
 import SearchBar from "../SearchBar/SearchBar";
@@ -14,24 +15,27 @@ import css from "./App.module.css";
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false); // Стан помилки як boolean
+  const [error, setError] = useState<boolean>(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const handleSearch = async (query: string) => {
     try {
-      setMovies([]); // Очищення перед новим пошуком за ТЗ
+      setMovies([]);
       setLoading(true);
       setError(false);
 
       const data = await MovieService.fetchMoviesByQuery(query);
-      setMovies(data.results);
 
+      // Перевірка на успішність запиту та наявність результатів
       if (data.results.length === 0) {
         toast.error("No movies found for your request.");
+      } else {
+        setMovies(data.results);
       }
     } catch (err) {
       console.error(err);
       setError(true);
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -41,20 +45,18 @@ function App() {
     <div className={css.app}>
       <SearchBar onSubmit={handleSearch} />
 
-      {/* Контейнер для сповіщень */}
-      <Toaster position="top-right" />
+      <Toaster position="top-right" reverseOrder={false} />
 
       <main className={css.container}>
-        {/* Рендеримо Error, Loader або Grid залежно від стану */}
         {error && <ErrorMessage />}
         {loading && <Loader />}
 
-        {movies.length > 0 && !error && (
+        {/* Галерея рендериться лише якщо є фільми і немає помилки */}
+        {movies.length > 0 && !error && !loading && (
           <MovieGrid movies={movies} onSelect={setSelectedMovie} />
         )}
       </main>
 
-      {/* Модал відкривається, якщо є вибраний фільм */}
       {selectedMovie && (
         <MovieModal
           movie={selectedMovie}
