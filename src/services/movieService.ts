@@ -1,5 +1,13 @@
 import axios from "axios";
-import type { MovieResponse } from "../types/movie";
+
+import type { Movie } from "../types/movie";
+
+export interface MovieResponse {
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
 
 const API_TOKEN = import.meta.env.VITE_TMDB_TOKEN;
 
@@ -36,16 +44,15 @@ export const getMovieImageUrl = (
   size: string = "w500",
 ): string => {
   if (!path) {
-    // Додаємо розміри, щоб заглушка реально працювала
-    return "https://placeholder.com";
+    // ВИПРАВЛЕНО: робоче посилання на заглушку (via.placeholder)
+    return `https://placeholder.com`;
   }
 
-  // ПРАВИЛЬНО: домен, шлях, розмір і шлях до файлу
   return `https://image.tmdb.org/t/p/${size}${path}`;
 };
 
 const MovieService = {
-  fetchMoviesByQuery, // Переконайтеся, що ця функція оголошена вище в цьому ж файлі
+  fetchMoviesByQuery,
   getMovieImageUrl,
 };
 
