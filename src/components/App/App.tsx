@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import MovieService from "../../services/movieService";
-// ПРАВИЛЬНО: використовуємо type для інтерфейсів
+
 import type { Movie } from "../../types/movie";
 
 import SearchBar from "../SearchBar/SearchBar";

@@ -1,6 +1,3 @@
-// 1. Розділяємо імпорт: useState — це значення, решта — типи
-import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import css from "./SearchBar.module.css";
 
@@ -9,44 +6,28 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onSubmit }: SearchBarProps) {
-  const [value, setValue] = useState<string>("");
+  const handleFormAction = (formData: FormData) => {
+    const query = formData.get("query") as string;
 
-  // 2. Використовуємо FormEvent тут, щоб він не вважався "невикористаним"
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (value.trim() === "") {
+    if (!query || query.trim() === "") {
       toast.error("Please enter your search query.");
       return;
     }
 
-    onSubmit(value);
-    setValue("");
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    onSubmit(query.trim());
   };
 
   return (
     <header className={css.header}>
       <Toaster position="top-right" />
       <div className={css.container}>
-        <a
-          className={css.link}
-          href="https://themoviedb.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by TMDB
-        </a>
-        <form className={css.form} onSubmit={handleSubmit}>
+        <span className={css.link}>Powered by TMDB</span>
+
+        <form className={css.form} action={handleFormAction}>
           <input
             className={css.input}
             name="query"
             type="text"
-            value={value}
-            onChange={handleChange}
             autoComplete="off"
             autoFocus
             placeholder="Search movies..."
